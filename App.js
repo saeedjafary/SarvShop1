@@ -1,19 +1,64 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react';
+import Login from './components/Login'
+import Home from './components/Home'
+import { Provider } from "react-redux"
+import { createStore } from "redux"
+import reducer from './components/reducer.js'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>New Change</Text>
-    </View>
-  );
+                
+       
+import {                          
+  createStackNavigator,             
+  createAppContainer
+} from 'react-navigation';            
+const AppStackNavigator = createStackNavigator({
+  Login: {                                                   
+    screen: Login ,                            
+    mode: 'screen',       
+    headerMode: 'none',
+        navigationOptions: {                    
+        header:null,           
+        headerVisible: false,
+    }
+  },
+  Home: {                                
+    screen: Home,
+    mode: 'screen',
+    headerMode: 'none',
+    navigationOptions: {
+        header:null,
+        headerVisible: false,
+    }      
+  
+  }
+ 
+
+ }
+ 
+ );
+const Navigator = createAppContainer(AppStackNavigator);
+const store = createStore(reducer)
+
+export default class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {           
+      loading: true
+
+    }
+  }    
+  componentDidMount () {
+   
+  }     
+  async componentWillMount() { 
+  
+  }
+  render() {
+    return (    
+      <Provider store={store}>
+          <Navigator color={1}/>
+        </Provider>  
+      ); 
+  } 
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
