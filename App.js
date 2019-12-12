@@ -4,11 +4,11 @@ import Home from './components/Home'
 import { Provider } from "react-redux"
 import { createStore } from "redux"
 import reducer from './components/reducer.js'
-
+import { connect } from "react-redux"
+import {createStackNavigator} from 'react-navigation-stack';
                 
        
 import {                          
-  createStackNavigator,             
   createAppContainer
 } from 'react-navigation';            
 const AppStackNavigator = createStackNavigator({

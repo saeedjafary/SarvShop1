@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet,Button } from 'react-native'; 
+import { connect } from "react-redux"
 
 class Login extends React.Component {   
   constructor(props){   
@@ -22,8 +23,9 @@ class Login extends React.Component {
   }
  
   render() {
-    
-           
+        const {navigate} = this.props.navigation;
+
+                       
     return (   
                 
     <Button

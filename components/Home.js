@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet,View, Text  } from 'react-native'; 
+import { connect } from "react-redux"
 
 class Home extends React.Component {   
   constructor(props){   
@@ -22,7 +23,7 @@ class Home extends React.Component {
   }
  
   render() {
-    
+
            
     return (   
                 
