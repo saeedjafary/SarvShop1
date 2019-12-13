@@ -12,15 +12,6 @@ import {
   createAppContainer
 } from 'react-navigation';            
 const AppStackNavigator = createStackNavigator({
-  Login: {                                                   
-    screen: Login ,                            
-    mode: 'screen',       
-    headerMode: 'none',
-        navigationOptions: {                    
-        header:null,           
-        headerVisible: false,
-    }
-  },
   Home: {                                
     screen: Home,
     mode: 'screen',
@@ -30,10 +21,22 @@ const AppStackNavigator = createStackNavigator({
         headerVisible: false,
     }      
   
+  },
+  Login: {                                                   
+    screen: Login ,                            
+    mode: 'screen',       
+    headerMode: 'none',
+    navigationOptions: {                    
+        header:null,           
+        headerVisible: false,
+    }
   }
  
 
- }
+ },
+  {
+    initialRouteName: 'Home',
+  }
  
  );
 const Navigator = createAppContainer(AppStackNavigator);
@@ -48,7 +51,6 @@ export default class App extends React.Component {
     }
   }    
   componentDidMount () {
-   
   }     
   async componentWillMount() { 
   
