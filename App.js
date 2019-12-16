@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Login from './components/Login'
 import Home from './components/Home'
+import Server from './components/Server'
 import { Provider } from "react-redux"
 import { createStore } from "redux"
 import reducer from './components/reducer.js'
@@ -30,6 +31,10 @@ const AppStackNavigator = createStackNavigator({
         header:null,           
         headerVisible: false,
     }
+  },
+  Server: {                                
+    screen: Server,
+    mode: 'screen'  
   }
  
 
