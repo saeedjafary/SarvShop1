@@ -1,16 +1,26 @@
 import React, { Component } from 'react';
-import { StyleSheet  } from 'react-native'; 
+import { StyleSheet ,ScrollView } from 'react-native'; 
 import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
 
-import { Container, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Icon } from 'native-base';
+import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon } from 'native-base';
 const cards = [
   {
     text: 'Card One',
-    name: 'One',
+    name: 'One', 
     image: require('../img/5725d86ad3aab.jpg'),
-  }
+  },
+  {
+    text: 'Card Two',
+    name: 'Two',
+    image: require('../img/featured_5.png'),
+  },
+  {
+    text: 'Card Three',
+    name: 'Three',
+    image: require('../img/banner_product.png'), 
+  }   
 ];
 class Home extends React.Component {   
   constructor(props){   
@@ -52,9 +62,45 @@ class Home extends React.Component {
 
            
     return (   
+      <ScrollView>
     <Container>
         <Header />
+        <Content>
+        
         <View>
+        <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail source={{uri: 'https://www.kingarthurflour.com/sites/default/files/styles/featured_image/public/recipe_legacy/20-3-large.jpg?itok=1EY8KWJG'}} />
+                <Body>
+                  <Text>NativeBase</Text>
+                  <Text note>GeekyAnts</Text>
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem cardBody>
+              <Image source={{uri: 'https://www.kingarthurflour.com/sites/default/files/styles/featured_image/public/recipe_legacy/20-3-large.jpg?itok=1EY8KWJG'}} style={{height: 200, width: null, flex: 1}}/>
+            </CardItem>
+            <CardItem>
+              <Left>
+                <Button transparent>
+                  <Icon active name="thumbs-up" />
+                  <Text>12 Likes</Text>
+                </Button>
+              </Left>
+              <Body>
+                <Button transparent>
+                  <Icon active name="chatbubbles" />
+                  <Text>4 Comments</Text>
+                </Button>
+              </Body>
+              <Right>
+                <Text>11h ago</Text>
+              </Right>
+            </CardItem>
+          </Card>
+          </View>
+        <View style={{marginBottom:100}}>
           <DeckSwiper
             ref={(c) => this._deckSwiper = c}
             dataSource={cards}
@@ -85,19 +131,12 @@ class Home extends React.Component {
             }
           />
         </View>
-        <View style={{ flexDirection: "row", flex: 1, position: "absolute", bottom: 50, left: 0, right: 0, justifyContent: 'space-between', padding: 15 }}>
-          <Button iconLeft onPress={() => this._deckSwiper._root.swipeLeft()}>
-            <Icon name="arrow-back" />
-            <Text>Swipe Left</Text>
-          </Button>
-          <Button iconRight onPress={() => this._deckSwiper._root.swipeRight()}>
-            <Icon name="arrow-forward" />
-            <Text>Swipe Right</Text>
-          </Button>
-        </View>
+      
+       
+          </Content> 
       </Container>
-           
-    );
+           </ScrollView>
+    );  
   }
 }
 
