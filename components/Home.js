@@ -4,6 +4,8 @@ import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
 import moment from 'moment-jalaali';
+import 'moment/locale/fa'  
+
 
 import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon } from 'native-base';
 const cards = [
@@ -40,10 +42,11 @@ class Home extends React.Component {
     }
 
   }  
-  componentDidMount() {
+  componentDidMount() { 
  let that = this;
    
     let SCallBack = function(response){
+
      var HarajDate = response.data.result[0].HarajDate.split("/"),
                     TodayDate = response.data.TodayDate.split("/");
 
@@ -51,34 +54,35 @@ class Home extends React.Component {
                 if(parseInt(HarajDate[0])>parseInt(TodayDate[0]) || (parseInt(HarajDate[0])==parseInt(TodayDate[0]) && parseInt(HarajDate[1])>parseInt(TodayDate[1]))|| (parseInt(HarajDate[0])==parseInt(TodayDate[0]) && parseInt(HarajDate[1])==parseInt(TodayDate[1]) && parseInt(HarajDate[2])>parseInt(TodayDate[2])))    
                 //if(HarajDate >= TodayDate)
                 {  
-                    var that=this;
-                    var x = setInterval(function() {
-                        var distance = new Date(response.data.result[0].HarajDate) - new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss"));
-
+                  // var x = setInterval(function() {
+                         var distance = new Date(response.data.result[0].HarajDate) - new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss"));  
+          console.log(new Date(new moment().locale('fa').format("jYYYY/jMM/jDD HH:mm:ss")))    
                         var day = Math.floor(distance / (1000 * 60 * 60 * 24));
                         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                         var seconds = Math.floor((distance % (1000 * 60)) / 1000); 
                       
                         // Display the result in the element with id="demo"
-                        that.setState({
-                            day:day,
+                        //console.log(response.data.result[0].HarajDate)
+                        
+                        that.setState({  
+                            day:day,   
                             hours:hours,
                             minutes:minutes,
                             seconds:seconds
                         })
                       
                         // If the count down is finished, write some text
-                        if (distance < 0) {
-                          clearInterval(x);
+                        //if (distance < 0) {
+                         // clearInterval(x);
                           //document.getElementById("demo").innerHTML = "EXPIRED";
-                        }
-                      }, 1000);
-                 var maximg = 'https://marketapi.sarvapps.ir/' + response.data.result[0]    .fileUploaded.split("public")[1];
+                        //}
+                    //  }, 1000); 
+                 var maximg = 'https://marketapi.sarvapps.ir/' + response.data.result[0].fileUploaded.split("public")[1];
                     that.setState({
                         MaxObj:response.data.result[0],
                         maximg:maximg
-                    }) 
+                    })  
                 }  
     } 
     let ECallBack = function(error){
@@ -108,7 +112,7 @@ class Home extends React.Component {
         <Card>
             <CardItem>
               <Left>
-                <Thumbnail source={{uri: 'https://www.kingarthurflour.com/sites/default/files/styles/featured_image/public/recipe_legacy/20-3-large.jpg?itok=1EY8KWJG'}} />
+                <Thumbnail source={{uri:this.state.maximg}} />
                 <Body>
                   <Text>NativeBase</Text>
                   <Text note>GeekyAnts</Text>
@@ -116,23 +120,23 @@ class Home extends React.Component {
               </Left>
             </CardItem>
             <CardItem cardBody>
-              <Image source={{uri: 'https://www.kingarthurflour.com/sites/default/files/styles/featured_image/public/recipe_legacy/20-3-large.jpg?itok=1EY8KWJG'}} style={{height: 200, width: null, flex: 1}}/>
+              <Image source={{uri:this.state.maximg}} style={{height: 200, width: null, flex: 1}}/>
             </CardItem>
             <CardItem>
               <Left>
                 <Button transparent>
                   <Icon active name="thumbs-up" />
-                  <Text>12 Likes</Text>
+                  <Text>{this.state.day}</Text>
                 </Button>
               </Left>
               <Body>
                 <Button transparent>
                   <Icon active name="chatbubbles" />
-                  <Text>4 Comments</Text>
+                  <Text>{this.state.hours}</Text>
                 </Button>
               </Body>
               <Right>
-                <Text>11h ago</Text>
+                <Text>{this.state.minutes}</Text>
               </Right>
             </CardItem>
           </Card>
