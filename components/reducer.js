@@ -1,20 +1,22 @@
     
 const initialState = {
-    username : ""
+    CartNumber: 0,
 }
 
 function reducer(state = initialState , action){
+
+   
     switch(action.type){    
-        case "LoginTrue":{    
-            return {
-                username : action.username
-            } 
-            break;        
-        }
-       
-        default:{
-            return initialState;
-        }
-    }
+       case "LoginTrueUser":{
+           //localStorage.setItem("CartNumber",action.CartNumber);
+           return {
+                CartNumber:action.CartNumber
+           } 
+           break;        
+       }
+       default:{
+           return initialState;
+       }
+   }
 }
 export default reducer;

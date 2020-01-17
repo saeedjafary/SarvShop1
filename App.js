@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Login from './components/Login'
+import Products from './components/Products'
 import Home from './components/Home'
 import Server from './components/Server'
 import { Provider } from "react-redux"
@@ -25,6 +26,15 @@ const AppStackNavigator = createStackNavigator({
   },
   Login: {                                                   
     screen: Login ,                            
+    mode: 'screen',       
+    headerMode: 'none',
+    navigationOptions: {                    
+        header:null,           
+        headerVisible: false,
+    }
+  },
+  Products: {                                                   
+    screen: Products ,                            
     mode: 'screen',       
     headerMode: 'none',
     navigationOptions: {                    

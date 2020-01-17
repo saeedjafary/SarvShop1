@@ -6,7 +6,8 @@ import { Image } from 'react-native';
 import moment from 'moment-jalaali'; 
 import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-    
+import {AsyncStorage} from 'react-native';
+   
 let cards = [];
 function Item({ title }) {
   return (
@@ -33,12 +34,40 @@ class Home extends React.Component {
             seconds:0,
             Cat:[],
             Products:[],
-            Products4:[]
+            Products4:[],
+            username:null,
+            userId:null,
+            name:""
     }
-    
+    this.logout = this.logout.bind(this);
+    this.findUser = this.findUser.bind(this);
+
 
   }  
-  componentDidMount() { 
+  findUser(){
+    let that = this;
+    AsyncStorage.getItem('api_token').then((value) => {
+       let SCallBack = function(response){
+           that.setState({
+             username:response.data.authData.username,
+             userId : response.data.authData.userId,
+				     name : response.data.authData.name
+           })                 
+    } 
+    let ECallBack = function(error){
+     //alert(error)   
+    }  
+        
+   this.Server.send("https://marketapi.sarvapps.ir/MainApi/checktoken",           {token:value},SCallBack,ECallBack) 
+
+    } )
+  }
+  componentDidUpdate(){
+    if(this.props.navigation && this.props.navigation.state  && this.props.navigation.state.params && this.props.navigation.state.params.p && !this.state.username)
+      this.findUser(); 
+  }
+  componentDidMount() {
+    this.findUser(); 
  let that = this;
    
     let SCallBack = function(response){
@@ -94,6 +123,13 @@ class Home extends React.Component {
  
  
   }
+  logout(){    
+    alert(1)
+    AsyncStorage.setItem('api_token',"");
+    this.setState({
+      username:null  
+    })
+  }
  getProducts(limit){
 let that = this;
    
@@ -117,7 +153,7 @@ let that = this;
   this.Server.send("https://marketapi.sarvapps.ir/MainApi/getProducts",{type:1,limit:limit},SCallBack,ECallBack) 
 
 
- } 
+ }  
  getCategory(){
  let that = this;
    
@@ -133,16 +169,36 @@ let that = this;
   this.Server.send("https://marketapi.sarvapps.ir/MainApi/GetCategory",{},SCallBack,ECallBack) 
  }
   render() { 
+    const {navigate} = this.props.navigation;    
 
            
     return (   
     <Container>
         <Header />
-        
+          
         <Content>
         <ScrollView>
-      
-           
+        <Grid>
+        <Row>
+<Col>   
+{!this.state.username &&   
+         <View><Button onPress={() => { navigate('Login')}}><Text> ورود به محیط کاربری</Text></Button>
+          </View>
+}{this.state.username &&
+<View><Button onPress={this.logout}><Text> خروج از سیستم</Text></Button>
+          </View>
+
+}  
+          </Col>  
+        <Col>
+
+         {this.state.username &&
+         <View><Text style={{paddingRight:10,textAlign:'right'}}>{this.state.name  ?       this.state.name : this.state.username} خوش آمدید</Text></View>
+         }
+         </Col>
+         
+          </Row>
+          </Grid>
           <Grid>
           
              <Row>
@@ -152,13 +208,20 @@ let that = this;
         data={this.state.Cat}
         horizontal={true}
         inverted={true}
-        renderItem={({ item }) => <Item title={item.name} />}
+        renderItem={({ item }) => (
+          <View style={{margin:5}}>
+            <Button onPress={() => navigate('Login', {name: 'Jane'})} >
+                <Text>{item.name}</Text>
+            </Button>
+          </View>
+        
+    )}
         keyExtractor={item => item._id}
       />  
     </SafeAreaView>
                 </Col>
              </Row>
-             
+             {this.state.MaxObj.length > 0 &&
               <Row >
                 <Col style={{height: 300 }}>
         <Card>
@@ -184,12 +247,15 @@ let that = this;
             </CardItem>
           </Card>
           </Col>
-             </Row></Grid>
+             </Row>
+             }
+             </Grid>
+             
                <Grid>
            {this.state.Products4[1] &&
           <Row style={{height:200}}>
-            <Col>
-              <View>
+            <Col onPress={() => navigate('Products', {id: this.state.Products4[0]._id})}>
+              <View> 
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[0].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
                <Text style={{textAlign:'right',color:'#fff'}} >
@@ -202,7 +268,7 @@ let that = this;
                 </View>
               </View>
             </Col>
-            <Col>
+            <Col onPress={() => navigate('Products', {id: this.state.Products4[1]._id})}>
               <View>
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[1].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
@@ -220,7 +286,7 @@ let that = this;
            }
            {this.state.Products4[3] &&
           <Row style={{height:200}}>
-            <Col>
+            <Col onPress={() => navigate('Products', {id: this.state.Products4[2]._id})}>
                <View>
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[2].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
@@ -234,7 +300,7 @@ let that = this;
                 </View>
               </View>
             </Col>
-            <Col>
+            <Col onPress={() => navigate('Products', {id: this.state.Products4[3]._id})}>
                <View>
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[3].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
