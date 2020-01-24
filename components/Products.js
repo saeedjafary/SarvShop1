@@ -1,27 +1,44 @@
 import React, { Component } from 'react';
-import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList } from 'react-native'; 
+import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList,TouchableOpacity } from 'react-native'; 
 import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
 import moment from 'moment-jalaali'; 
-import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon,Title } from 'native-base';
+import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon,Title,Input } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import {AsyncStorage} from 'react-native';
 
 class Products extends React.Component {   
   constructor(props){   
     super(props);    
     this.Server = new Server();
     this.state = {
-            Products:[]
+            Products:[],
+            id:this.props.navigation.state.params.id,
+            img1:null,
+            img2:null,
+            img3:null,
+            img4:null,
+            img5:null,
+            originalImage:null,
+            Count:"1",
+            price:null,
+            off:null,
+            api_token:null
+
     }
+    this.changeImage = this.changeImage.bind(this)
 
     
    
 
   }  
   componentDidMount() {
-    alert(this.props.navigation.state.params.id)
-  
+   // alert(this.props.navigation.state.params.id)
+   AsyncStorage.getItem('api_token').then((value) => this.setState({
+    api_token : value
+   }))
+   this.getProduct();
   }
   
  
@@ -29,25 +46,86 @@ class Products extends React.Component {
  
  
   }
-  getProduct(){
+  ChangeCount(p){
+      if(p==-1 && this.state.Count <= 1  )
+        return;
+      this.setState({
+        Count:parseInt(this.state.Count)+p+""
+      })
+  }
+  changeImage(p){
+    let img = null;
+    if(p=="1")
+      img = this.state.img1;
+    if(p=="2")
+      img = this.state.img2;
+    if(p=="3")
+      img = this.state.img3;
+    if(p=="4")
+      img = this.state.img4;
+    if(p=="5")
+      img = this.state.img5;
+    this.setState({
+      originalImage : img
+    })
+    
+  }
+  SendToCart(){
     let that = this;
-   
-    let SCallBack = function(response){
-
-                    that.setState({
-                        MaxObj:response.data.result[0],
-                        maximg:maximg
-                    })   
+    this.Server.send("https://marketapi.sarvapps.ir/MainApi/checktoken",{
+      token:this.state.api_token
+    },function(response){
+      let SCallBack = function(response){
+             that.props.navigation.navigate('Home',{p:'a'}) 
     } 
     let ECallBack = function(error){
      alert(error)   
     }  
+    let param={
+       PId : that.state.id,
+       Number : that.state.Count,
+       UId :  response.data.authData.userId,
+       Price : that.state.Products[0].price - ((that.state.Products[0].price * that.state.Products[0].off)/100),
+       Status:"0",
+       Type:"insert",
+       token: that.state.api_token
+   }  
+   that.Server.send("https://marketapi.sarvapps.ir/MainApi/ManageCart",param,SCallBack,ECallBack) 
+
+    },function(error){
+        alert("ابتدا وارد سایت شوید")
+    }) 
         
-   this.Server.send("https://marketapi.sarvapps.ir/MainApi/getProducts",{type:1,limit:0},SCallBack,ECallBack) 
+
+    }
+  getProduct(){
+    let that = this;
+   
+    let SCallBack = function(response){
+                    var resp = response.data.result[0];
+                    that.setState({
+                        Products:response.data.result,
+                img1:resp.fileUploaded != "" ? resp.fileUploaded.split("public")[1] : 'nophoto.png',
+                img2:resp.fileUploaded1 != "" ? resp.fileUploaded1.split("public")[1] : 'nophoto.png',
+                img3:resp.fileUploaded2 != "" ? resp.fileUploaded2.split("public")[1] : 'nophoto.png',
+                img4:resp.fileUploaded3 != "" ? resp.fileUploaded3.split("public")[1] : 'nophoto.png',
+                img5:resp.fileUploaded4 != "" ? resp.fileUploaded4.split("public")[1] : 'nophoto.png',
+                originalImage:resp.fileUploaded != "" ? resp.fileUploaded.split("public")[1] : 'nophoto.png'
+                    })  
+                 //   alert(that.state.Products.length)  
+    } 
+    let ECallBack = function(error){
+     alert(error)   
+    }  
+    let param={
+        id : this.state.id,
+        token: this.state.api_token
+        };    
+   this.Server.send("https://marketapi.sarvapps.ir/MainApi/getProducts",param,SCallBack,ECallBack) 
   }
   render() {
         const {navigate} = this.props.navigation;
-
+        
                        
     return (   
     <Container>
@@ -67,48 +145,60 @@ class Products extends React.Component {
         
         <Content>
         <ScrollView>
+        {this.state.Products.length>0 &&
           <Grid>
-             {this.state.Products.length>0 &&
              <Row>  
-             <Col style={{  height: 300 }}>  
-             <Button
-      title="Go to Jane's profile"
-      onPress={() => this.props.navigation.goBack()}
-    />
-          <DeckSwiper
-            ref={(c) => this._deckSwiper = c}
-            dataSource={this.state.Products}
-            renderEmpty={() =>
-              <View style={{ alignSelf: "center" }}>
-                <Text>Over</Text>
-              </View>  
-            }  
-            renderItem={item =>
-            
-              <Card style={{ elevation: 3 }}>
-                <CardItem>
-                  <Left> 
-                    <Thumbnail source={{uri:'https://marketapi.sarvapps.ir/' + item.fileUploaded.split("public")[1]}} />
-                    <Body>    
-                      <Text>{item.title}</Text>
-                      <Text note>{item.subTitle}</Text>  
-                    </Body>
-                  </Left> 
-                </CardItem>
-                <CardItem cardBody>
-                  <Image style={{ height: 300, flex: 1 }} source={{uri:'https://marketapi.sarvapps.ir/' + item.fileUploaded.split("public")[1]}} />
-                </CardItem>
-                <CardItem>
-                  <Icon name="heart" style={{ color: '#ED4A6A' }} />
-                  <Text>{item.title}</Text>
-                </CardItem>
-              </Card>
-            }
-          />  
-        </Col></Row>
-        }
-        </Grid>
+             <Col >  
+                <View style={{backgroundColor:'#eee'}}>
+                  <Text style={{textAlign:'center',paddingRight:10,fontSize:25}}>{this.state.Products[0].title}</Text>
+                  <Text style={{textAlign:'center',paddingRight:10}}>{this.state.Products[0].subTitle}</Text>
+                  <Text style={{textAlign:'right',padding:10,color:'red'}}>{this.state.Products[0].price - ((this.state.Products[0].price * this.state.Products[0].off)/100)} تومان</Text>
 
+               
+                </View>
+                <View>
+                  <Text style={{textAlign:'right',padding:10}}>{this.state.Products[0].desc}</Text>
+                </View>
+             </Col>
+             
+             </Row>
+           
+        <Row>
+        <Col >
+<TouchableOpacity onPress={() => this.changeImage(5)} ><Image source={{uri:'https://marketapi.sarvapps.ir/' + this.state.img5 }} style={{border:1,height: 60, width: null, flex: 1}}/></TouchableOpacity>
+</Col><Col >
+<TouchableOpacity onPress={() => this.changeImage(4)} ><Image  source={{uri:'https://marketapi.sarvapps.ir/' + this.state.img4}} style={{height: 60, width: null, flex: 1}}/></TouchableOpacity></Col><Col >
+<TouchableOpacity onPress={() => this.changeImage(3)} ><Image source={{uri:'https://marketapi.sarvapps.ir/' + this.state.img3}} style={{height: 60, width: null, flex: 1}}/></TouchableOpacity></Col><Col >
+<TouchableOpacity onPress={() => this.changeImage(2)} ><Image source={{uri:'https://marketapi.sarvapps.ir/' + this.state.img2}} style={{height: 60, width: null, flex: 1}}/></TouchableOpacity></Col><Col >
+<TouchableOpacity onPress={() => this.changeImage(1)} ><Image source={{uri:'https://marketapi.sarvapps.ir/' + this.state.img1}} style={{border:1,height: 60, width: null, flex: 1}}/></TouchableOpacity>
+        </Col>
+        </Row>
+          <Row>  
+             <Col style={{  height: 300}}>  
+             <Image source={{uri:'https://marketapi.sarvapps.ir/' + this.state.originalImage}} style={{ width: null, flex: 1}}/>
+        </Col>
+        </Row>
+        </Grid>
+}
+  <Grid>
+    <Row>
+      <Col  style={{width:'20%'}}>
+          <TouchableOpacity onPress={() => this.ChangeCount(1)}><Text style={{fontSize:50,textAlign:'center'}}>+</Text></TouchableOpacity>
+      </Col>
+      <Col style={{width:'60%'}}>
+          <Input value={this.state.Count} keyboardType="number-pad" name="username"                        onChangeText={(text) => this.setState({Count:text})  } style={{border:1,textAlign:'center',fontSize:50}}  />
+      </Col>
+      <Col style={{width:'20%'}}>
+          <TouchableOpacity  onPress={() => this.ChangeCount(-1)}><Text style={{fontSize:50,textAlign:'center'}}>-</Text></TouchableOpacity>
+      </Col>
+    </Row>
+  </Grid>
+  <View style={{textAlign:'center',marginBottom:10,marginTop:10}}>
+      <Button iconLeft light onPress={() => this.SendToCart()}>
+            <Icon name='cart' />
+            <Text style={{textAlign:'center'}}>انتقال به سبد خرید</Text>
+          </Button>
+  </View>
          </ScrollView> 
          </Content> 
      </Container>             
