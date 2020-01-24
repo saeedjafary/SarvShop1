@@ -13,18 +13,12 @@ class Cart extends React.Component {
     super(props);    
     this.Server = new Server();
     this.state = {
-            Products:[],
-            id:this.props.navigation.state.params.id,
-            img1:null,
-            img2:null,
-            img3:null,
-            img4:null,
-            img5:null,
-            originalImage:null,
-            Count:"1",
-            price:null,
-            off:null,
-            api_token:null
+            UserId:null,
+            api_token:null,
+            lastPrice:"0",
+            GridData:null,
+            CartNumber:null
+
 
     }
 
@@ -33,8 +27,26 @@ class Cart extends React.Component {
 
   }  
   componentDidMount() {
-   // alert(this.props.navigation.state.params.id)
+       let that = this;
+
+   AsyncStorage.getItem('api_token').then((value) => {
+   this.setState({
+    api_token : value
+   })
+   that.Server.send("https://marketapi.sarvapps.ir/MainApi/checktoken",{
+      token:that.state.api_token
+    },function(response){
+      that.setState({
+        UserId : response.data.authData.userId
+      })
+      that.getCartItems();
+
+    },function(error){
+        alert(error)
+    })
+   })
    
+    
   }
   
  
@@ -42,7 +54,35 @@ class Cart extends React.Component {
  
  
   }
-  
+  getCartItems(){
+        let that=this;
+        this.setState({
+            lastPrice : 0
+        })         
+        let param={
+              UId : this.state.userId
+        };
+        let SCallBack = function(response){
+                let lastPrice=0, 
+                    CartNumber=0;
+                response.data.result.map((res) =>{
+                    lastPrice+=res.number*res.price;
+                    CartNumber++;
+                })
+                alert(lastPrice)
+                that.setState({
+                    lastPrice:lastPrice,
+                    GridData:response.data.result,
+                    CartNumber:CartNumber
+                })
+                
+    
+         };
+         let ECallBack = function(error){
+                alert(error)
+        }
+        this.Server.send("https://marketapi.sarvapps.ir/MainApi/getCartPerId",param,SCallBack,ECallBack)
+    }
   render() {
         const {navigate} = this.props.navigation;
         

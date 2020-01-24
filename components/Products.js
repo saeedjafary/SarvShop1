@@ -76,7 +76,7 @@ class Products extends React.Component {
       token:this.state.api_token
     },function(response){
       let SCallBack = function(response){
-             that.props.navigation.navigate('Home',{p:'a'}) 
+             that.props.navigation.navigate('Cart',{p:'a'}) 
     } 
     let ECallBack = function(error){
      alert(error)   
