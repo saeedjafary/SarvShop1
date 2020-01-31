@@ -16,16 +16,7 @@ import * as Font from 'expo-font';
 import {                          
   createAppContainer
 } from 'react-navigation';       
-await loadAsync({
-  // Load a font `Montserrat` from a static resource
-  Montserrat: require('./assets/fonts/IRANSansMobile.ttf'),
-
-  // Any string can be used as the fontFamily name. Here we use an object to provide more control
-  'IRANSansMobile': {
-    uri: require('./assets/fonts/IRANSansMobile.ttf'),
-    fontDisplay: FontDisplay.FALLBACK,
-  },
-});     
+  
 const AppStackNavigator = createStackNavigator({
   Home: {                                
     screen: Home,
@@ -88,6 +79,10 @@ export default class App extends React.Component {
     }
   }    
   componentDidMount () {
+    Font.loadAsync({
+      'IRANSansMobile': require('./assets/fonts/IRANSansMobile.ttf'),
+    });
+      
   }     
   async componentWillMount() { 
   

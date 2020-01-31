@@ -133,7 +133,7 @@ class Cart extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>سبد خرید ({this.state.CartNumber})</Title>
+            <Title style={{fontFamily:"IRANSansMobile"}}>سبد خرید ({this.state.CartNumber})</Title>
           </Body>
           <Right>
            
@@ -143,19 +143,19 @@ class Cart extends React.Component {
         <Content>
         <ScrollView>
         <View>
-        <Text>
-          مبلغ قابل پرداخت
-          {this.state.lastPrice}
-          تومان
+        <Text   style={{fontFamily:"IRANSansMobile",textAlign:'center',marginTop:10,marginBottom:10}}>
+            مبلغ قابل پرداخت  
+            &nbsp;&nbsp;<Text style={{fontSize:25,color:'red'}}>{this.state.lastPrice}</Text> &nbsp;&nbsp; 
+            تومان
         </Text>
-        <Button ><Text> پرداخت </Text></Button>
+        <Button style={{textAlign:'center',marginTop:10,marginBottom:10}} ><Text   style={{fontFamily:"IRANSansMobile"}}> پرداخت </Text></Button>
         </View>
          <Grid style={{border:'1px solid red'}}>
 {
         this.state.GridData && this.state.GridData.map((item, index) => (
           
           <Row style={{height:200,borderWidth: 1,borderColor: '#d6d7da'}}>
-    <Col style={{borderRightWidth: 1,borderColor: '#d6d7da'}}>
+    <Col style={{verticalAlign:'middle',borderRightWidth: 1,borderColor: '#d6d7da',paddingTop:70}}>
     <TouchableOpacity  onPress={() => this.ChangeCount("0",index,item.products[0]._id)}><Icon name='close' style={{fontSize:50,textAlign:'center'}}  /></TouchableOpacity>
       
     </Col>      
@@ -163,13 +163,13 @@ class Cart extends React.Component {
   <Grid>
     <Row>
       <Col>
-          <TouchableOpacity onPress={() => this.ChangeCount(+1,index,item.products[0]._id)} ><Text style={{fontSize:50,textAlign:'center'}}>+</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => this.ChangeCount(+1,index,item.products[0]._id)} ><Text style={{fontFamily:"IRANSansMobile",fontSize:50,textAlign:'center'}}>+</Text></TouchableOpacity>
       </Col> 
       </Row>
       <Row> 
       <Col>
           <View>
-            <Text style={{fontSize:50,textAlign:'center'}}>
+            <Text style={{fontFamily:"IRANSansMobile",fontSize:50,textAlign:'center'}}>
               {this.state.ItemCount[index]}
             </Text>
           </View>
@@ -177,7 +177,7 @@ class Cart extends React.Component {
       </Row>
       <Row>
       <Col>
-          <TouchableOpacity  onPress={() => this.ChangeCount(-1,index,item.products[0]._id)}><Text style={{fontSize:50,textAlign:'center'}}>-</Text></TouchableOpacity>
+          <TouchableOpacity  onPress={() => this.ChangeCount(-1,index,item.products[0]._id)}><Text style={{fontFamily:"IRANSansMobile",fontSize:50,textAlign:'center'}}>-</Text></TouchableOpacity>
       </Col>
     </Row>
   </Grid>
@@ -185,7 +185,7 @@ class Cart extends React.Component {
   </Col>       
   <Col style={{width:'60%',borderRightWidth: 1,borderColor: '#d6d7da'}}>
       <View>
-        <Text>
+        <Text style={{fontFamily:"IRANSansMobile",textAlign:"center"}}>
           {item.products[0].desc}
         </Text>
       </View>
@@ -193,12 +193,12 @@ class Cart extends React.Component {
   
   <Col>
   <View>
-        <Text>
+        <Text style={{fontFamily:"IRANSansMobile",textAlign:"center"}}>
           {item.products[0].title}
         </Text>
       </View>
       <View>
-        <Text>
+        <Text style={{fontFamily:"IRANSansMobile",textAlign:"center"}}>
           {item.products[0].subTitle}
         </Text>
       </View>
