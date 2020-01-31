@@ -17,7 +17,8 @@ class Cart extends React.Component {
             api_token:null,
             lastPrice:"0",
             GridData:null,
-            CartNumber:null
+            CartNumber:null,
+            ItemCount:[]
 
 
     }
@@ -39,6 +40,7 @@ class Cart extends React.Component {
       that.setState({
         UserId : response.data.authData.userId
       })
+
       that.getCartItems();
 
     },function(error){
@@ -54,27 +56,62 @@ class Cart extends React.Component {
  
  
   }
+  ChangeCount(C,I,product_id){
+      if(C==-1 && this.state.ItemCount[I] <= 1  )
+          return;
+      let ItemCount = this.state.ItemCount;
+      ItemCount[I] = parseInt(ItemCount[I])+C+"";
+      /*this.setState({
+        ItemCount : ItemCount
+      })*/
+      let that = this;
+      let param={  
+              product_id :  product_id,
+              user_id : this.state.UserId,
+              number:C=="0" ? C : ItemCount[I]
+        };
+
+        let SCallBack = function(response){
+                that.getCartItems();
+         };
+         let ECallBack = function(error){
+                alert(error)
+        }
+        this.Server.send("https://marketapi.sarvapps.ir/MainApi/changeCart",param,SCallBack,ECallBack)
+
+  }
   getCartItems(){
         let that=this;
         this.setState({
             lastPrice : 0
         })         
         let param={
-              UId : this.state.userId
+              UId : this.state.UserId
         };
+
         let SCallBack = function(response){
                 let lastPrice=0, 
-                    CartNumber=0;
-                response.data.result.map((res) =>{
+                    CartNumber=0,
+                    ItemCount=[];
+                response.data.result.map((res,index) =>{
                     lastPrice+=res.number*res.price;
-                    CartNumber++;
+                    CartNumber+=parseInt(res.number);
+                    ItemCount[index] = res.number+""
+
                 })
-                alert(lastPrice)
+                AsyncStorage.setItem('CartNumber',CartNumber);
+                                     console.log(CartNumber)
+
                 that.setState({
                     lastPrice:lastPrice,
                     GridData:response.data.result,
-                    CartNumber:CartNumber
+                    CartNumber:CartNumber,
+                    ItemCount:ItemCount
                 })
+                 that.props.dispatch({
+                    type: 'LoginTrueUser',    
+                    CartNumber:that.state.CartNumber
+                  })
                 
     
          };
@@ -96,7 +133,7 @@ class Cart extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>سبد خرید</Title>
+            <Title>سبد خرید ({this.state.CartNumber})</Title>
           </Body>
           <Right>
            
@@ -105,7 +142,74 @@ class Cart extends React.Component {
         
         <Content>
         <ScrollView>
-        
+        <View>
+        <Text>
+          مبلغ قابل پرداخت
+          {this.state.lastPrice}
+          تومان
+        </Text>
+        <Button ><Text> پرداخت </Text></Button>
+        </View>
+         <Grid style={{border:'1px solid red'}}>
+{
+        this.state.GridData && this.state.GridData.map((item, index) => (
+          
+          <Row style={{height:200,borderWidth: 1,borderColor: '#d6d7da'}}>
+    <Col style={{borderRightWidth: 1,borderColor: '#d6d7da'}}>
+    <TouchableOpacity  onPress={() => this.ChangeCount("0",index,item.products[0]._id)}><Icon name='close' style={{fontSize:50,textAlign:'center'}}  /></TouchableOpacity>
+      
+    </Col>      
+   <Col style={{borderRightWidth: 1,borderColor: '#d6d7da'}}>
+  <Grid>
+    <Row>
+      <Col>
+          <TouchableOpacity onPress={() => this.ChangeCount(+1,index,item.products[0]._id)} ><Text style={{fontSize:50,textAlign:'center'}}>+</Text></TouchableOpacity>
+      </Col> 
+      </Row>
+      <Row> 
+      <Col>
+          <View>
+            <Text style={{fontSize:50,textAlign:'center'}}>
+              {this.state.ItemCount[index]}
+            </Text>
+          </View>
+      </Col>
+      </Row>
+      <Row>
+      <Col>
+          <TouchableOpacity  onPress={() => this.ChangeCount(-1,index,item.products[0]._id)}><Text style={{fontSize:50,textAlign:'center'}}>-</Text></TouchableOpacity>
+      </Col>
+    </Row>
+  </Grid>
+  
+  </Col>       
+  <Col style={{width:'60%',borderRightWidth: 1,borderColor: '#d6d7da'}}>
+      <View>
+        <Text>
+          {item.products[0].desc}
+        </Text>
+      </View>
+  </Col>
+  
+  <Col>
+  <View>
+        <Text>
+          {item.products[0].title}
+        </Text>
+      </View>
+      <View>
+        <Text>
+          {item.products[0].subTitle}
+        </Text>
+      </View>
+      
+  </Col>
+</Row>
+               
+         )) 
+      }  
+
+        </Grid>
          </ScrollView> 
          </Content> 
      </Container>             
@@ -118,7 +222,7 @@ class Cart extends React.Component {
 
 function mapStateToProps(state) {        
   return {
-    username : state.username
+    CartNumber : state.CartNumber
   }
 }
 export default connect(mapStateToProps)(Cart)  

@@ -37,7 +37,8 @@ class Home extends React.Component {
             Products4:[],
             username:null,
             userId:null,
-            name:""
+            name:"",
+            CartNumber:0
     }
     this.logout = this.logout.bind(this);
     this.findUser = this.findUser.bind(this);
@@ -46,8 +47,15 @@ class Home extends React.Component {
   }  
   findUser(){
     let that = this;
-    AsyncStorage.getItem('api_token').then((value) => {
+    AsyncStorage.getItem('api_token').then((value) => {    
        let SCallBack = function(response){
+                       console.log(AsyncStorage.getItem('CartNumber')) 
+
+           AsyncStorage.getItem('CartNumber').then((value) => {
+              that.setState({   
+                CartNumber:value      
+              })
+           })
            that.setState({
              username:response.data.authData.username,
              userId : response.data.authData.userId,
@@ -115,10 +123,10 @@ class Home extends React.Component {
     }  
         
    this.Server.send("https://marketapi.sarvapps.ir/MainApi/getProducts",{type:1,limit:0},SCallBack,ECallBack) 
-     
+      //console.log(this.props)
+
   }
   
- 
   componentWillUnmount() {
  
  
@@ -193,9 +201,9 @@ let that = this;
         <Col>
 
          {this.state.username &&
-         <View><Text style={{paddingRight:10,textAlign:'right'}}>{this.state.name  ?       this.state.name : this.state.username} خوش آمدید</Text></View>
+         <View><Text style={{paddingRight:10,textAlign:'right'}}>{this.state.name  ?       this.state.name : this.state.username} سبد خرید ({this.state.CartNumber})</Text></View>
          }
-         </Col>
+         </Col>  
          
           </Row>
           </Grid>
@@ -365,7 +373,7 @@ let that = this;
 
 function mapStateToProps(state) {        
   return {
-    username : state.username
+    CartNumber : state.CartNumber
   }
 }
 export default connect(mapStateToProps)(Home)  
