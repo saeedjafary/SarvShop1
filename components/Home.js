@@ -7,8 +7,12 @@ import moment from 'moment-jalaali';
 import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {AsyncStorage} from 'react-native';
-   
-let cards = [];
+import { Drawer } from 'native-base';
+import SideBar from './SideBar.js'
+
+Drawer.defaultProps.styles.mainOverlay.elevation = 0;   
+     
+let cards = [];      
 function Item({ title }) {
   return (
     <View style={{margin:5}}>
@@ -32,7 +36,6 @@ class Home extends React.Component {
             hours:0,
             minutes:0,
             seconds:0,
-            Cat:[],
             Products:[],
             Products4:[],
             username:null,
@@ -42,20 +45,31 @@ class Home extends React.Component {
     }
     this.logout = this.logout.bind(this);
     this.findUser = this.findUser.bind(this);
-
-
+    this.openDrawer = this.openDrawer.bind(this)
+    this.closeDrawer = this.closeDrawer.bind(this)
+    
   }  
+  closeDrawer(){
+  this.drawer._root.close();
+}
+openDrawer(){
+  this.drawer._root.open();
+
+}
   findUser(){
     let that = this;
-    AsyncStorage.getItem('api_token').then((value) => {    
-       let SCallBack = function(response){
-                       console.log(AsyncStorage.getItem('CartNumber')) 
+      AsyncStorage.getItem('CartNumber').then((value) => {
+                        console.log(value) 
 
-           AsyncStorage.getItem('CartNumber').then((value) => {
               that.setState({   
                 CartNumber:value      
               })
            })
+    AsyncStorage.getItem('api_token').then((value) => {    
+       let SCallBack = function(response){
+
+         
+
            that.setState({
              username:response.data.authData.username,
              userId : response.data.authData.userId,
@@ -115,10 +129,10 @@ class Home extends React.Component {
                         MaxObj:response.data.result[0],
                         maximg:maximg
                     })   
-                }  
-                that.getCategory()
+                }     
+          that.getProducts(6)
     } 
-    let ECallBack = function(error){
+    let ECallBack = function(error){  
      alert(error)   
     }  
         
@@ -162,26 +176,20 @@ let that = this;
 
 
  }  
- getCategory(){
- let that = this;
-   
-    let SCallBack = function(response){
-        that.setState({
-          Cat:response.data.result
-        })
-        that.getProducts(6)
-        } 
-    let ECallBack = function(error){
-     alert(error)   
-    } 
-  this.Server.send("https://marketapi.sarvapps.ir/MainApi/GetCategory",{},SCallBack,ECallBack) 
- }
+ 
   render() { 
     const {navigate} = this.props.navigation;    
 
            
-    return (   
+    return (  
+     
     <Container>
+      <Drawer
+        side="right"
+        ref={(ref) => { this.drawer = ref; }}
+        content={<SideBar navigator={this.navigator} navigation={this.props.navigation} />}
+        onClose={() => this.closeDrawer()} >
+          
         <Header />
           
         <Content>
@@ -199,7 +207,9 @@ let that = this;
 }  
           </Col>  
         <Col>
-
+<Button onPress={this.openDrawer}>              
+            <Icon  name="apps" />             
+            </Button>
          {this.state.username &&
          <View><Text style={{paddingRight:10,textAlign:'right'}}>{this.state.name  ?       this.state.name : this.state.username} سبد خرید ({this.state.CartNumber})</Text></View>
          }
@@ -211,22 +221,7 @@ let that = this;
           
              <Row>
                 <Col>
-               <SafeAreaView >
-      <FlatList
-        data={this.state.Cat}
-        horizontal={true}
-        inverted={true}
-        renderItem={({ item }) => (
-          <View style={{margin:5}}>
-            <Button onPress={() => navigate('Login', {name: 'Jane'})} >
-                <Text>{item.name}</Text>
-            </Button>
-          </View>
-        
-    )}
-        keyExtractor={item => item._id}
-      />  
-    </SafeAreaView>
+             
                 </Col>
              </Row>
              {this.state.MaxObj.length > 0 &&
@@ -364,7 +359,7 @@ let that = this;
         </Grid>
        </ScrollView>
           </Content>
-
+</Drawer> 
       </Container>
     );  
   }

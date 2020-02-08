@@ -98,10 +98,9 @@ class Cart extends React.Component {
                     CartNumber+=parseInt(res.number);
                     ItemCount[index] = res.number+""
 
-                })
-                AsyncStorage.setItem('CartNumber',CartNumber);
-                                     console.log(CartNumber)
-
+                })     
+                AsyncStorage.setItem('CartNumber',CartNumber.toString());
+    
                 that.setState({
                     lastPrice:lastPrice,
                     GridData:response.data.result,
