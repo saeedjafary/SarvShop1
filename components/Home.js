@@ -4,11 +4,12 @@ import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
 import moment from 'moment-jalaali'; 
-import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon } from 'native-base';
+import { Container,Content,Header,  View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {AsyncStorage} from 'react-native';
 import { Drawer } from 'native-base';
 import SideBar from './SideBar.js'
+import HeaderBox from './HeaderBox.js'
 
 Drawer.defaultProps.styles.mainOverlay.elevation = 0;   
      
@@ -43,53 +44,22 @@ class Home extends React.Component {
             name:"",
             CartNumber:0
     }
-    this.logout = this.logout.bind(this);
-    this.findUser = this.findUser.bind(this);
-    this.openDrawer = this.openDrawer.bind(this)
+        this.openDrawer = this.openDrawer.bind(this)
     this.closeDrawer = this.closeDrawer.bind(this)
-    
+        this.logout = this.logout.bind(this);
+
   }  
-  closeDrawer(){
+closeDrawer(){
   this.drawer._root.close();
 }
 openDrawer(){
   this.drawer._root.open();
 
 }
-  findUser(){
-    let that = this;
-      AsyncStorage.getItem('CartNumber').then((value) => {
-                        console.log(value) 
-
-              that.setState({   
-                CartNumber:value      
-              })
-           })
-    AsyncStorage.getItem('api_token').then((value) => {    
-       let SCallBack = function(response){
-
-         
-
-           that.setState({
-             username:response.data.authData.username,
-             userId : response.data.authData.userId,
-				     name : response.data.authData.name
-           })                 
-    } 
-    let ECallBack = function(error){
-     //alert(error)   
-    }  
-        
-   this.Server.send("https://marketapi.sarvapps.ir/MainApi/checktoken",           {token:value},SCallBack,ECallBack) 
-
-    } )
-  }
   componentDidUpdate(){
-    if(this.props.navigation && this.props.navigation.state  && this.props.navigation.state.params && this.props.navigation.state.params.p && !this.state.username)
-      this.findUser(); 
+   
   }
   componentDidMount() {
-    this.findUser(); 
  let that = this;
    
     let SCallBack = function(response){
@@ -145,13 +115,7 @@ openDrawer(){
  
  
   }
-  logout(){    
-    alert(1)
-    AsyncStorage.setItem('api_token',"");
-    this.setState({
-      username:null  
-    })
-  }
+
  getProducts(limit){
 let that = this;
    
@@ -176,7 +140,13 @@ let that = this;
 
 
  }  
- 
+  logout(){    
+    alert(1)
+    AsyncStorage.setItem('api_token',"");
+    this.setState({
+      username:null  
+    })
+  }
   render() { 
     const {navigate} = this.props.navigation;    
 
@@ -184,21 +154,34 @@ let that = this;
     return (  
      
     <Container>
-      <Drawer
+     
+ <Drawer
         side="right"
         ref={(ref) => { this.drawer = ref; }}
         content={<SideBar navigator={this.navigator} navigation={this.props.navigation} />}
         onClose={() => this.closeDrawer()} >
-          
-        <Header />
-          
+   <Header style={{backgroundColor:'#fff'}} >
+   <Left>
+            <Button transparent onPress={this.openDrawer}>
+              <Icon type="Ionicons" name="folder" style={{fontSize: 30, color: 'blue'}} />
+            </Button>
+          </Left>
+          <Body>
+             <HeaderBox navigation={this.props.navigation} />
+
+          </Body>
+        </Header>        
         <Content>
-        <ScrollView>
-        <Grid>
-        <Row>
+
+        
+       
+        <ScrollView >     
+        
+          <Grid>
+          <Row>
 <Col>   
 {!this.state.username &&   
-         <View><Button onPress={() => { navigate('Login')}}><Text> ورود به محیط کاربری</Text></Button>
+         <View><Button onPress={() => { alert(1); navigate('Login')}}><Text> ورود به محیط کاربری</Text></Button>
           </View>
 }{this.state.username &&
 <View><Button onPress={this.logout}><Text> خروج از سیستم</Text></Button>
@@ -206,18 +189,13 @@ let that = this;
 
 }  
           </Col>  
-        <Col>
-<Button onPress={this.openDrawer}>              
-            <Icon  name="apps" />             
-            </Button>
-         {this.state.username &&
-         <View><Text style={{paddingRight:10,textAlign:'right'}}>{this.state.name  ?       this.state.name : this.state.username} سبد خرید ({this.state.CartNumber})</Text></View>
-         }
-         </Col>  
+     
+       
          
           </Row>
           </Grid>
-          <Grid>
+
+          <Grid >
           
              <Row>
                 <Col>
@@ -357,9 +335,10 @@ let that = this;
         </Col></Row>
         }
         </Grid>
+            
+
        </ScrollView>
-          </Content>
-</Drawer> 
+          </Content></Drawer> 
       </Container>
     );  
   }
