@@ -10,14 +10,21 @@ import {AsyncStorage} from 'react-native';
 import { Drawer } from 'native-base';
 import SideBar from './SideBar.js'
 import HeaderBox from './HeaderBox.js'
-
+const styles = StyleSheet.create({
+  Text: {
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 30,
+    fontFamily:'IRANSansMobile'
+  }
+});
 Drawer.defaultProps.styles.mainOverlay.elevation = 0;   
      
 let cards = [];      
 function Item({ title }) {
   return (
     <View style={{margin:5}}>
-      <Button ><Text>{title}</Text></Button>
+      <Button ><Text  style={styles.Text}>{title}</Text></Button>
     </View>
   );
 }
@@ -46,7 +53,6 @@ class Home extends React.Component {
     }
         this.openDrawer = this.openDrawer.bind(this)
     this.closeDrawer = this.closeDrawer.bind(this)
-        this.logout = this.logout.bind(this);
 
   }  
 closeDrawer(){
@@ -140,13 +146,7 @@ let that = this;
 
 
  }  
-  logout(){    
-    alert(1)
-    AsyncStorage.setItem('api_token',"");
-    this.setState({
-      username:null  
-    })
-  }
+
   render() { 
     const {navigate} = this.props.navigation;    
 
@@ -160,40 +160,18 @@ let that = this;
         ref={(ref) => { this.drawer = ref; }}
         content={<SideBar navigator={this.navigator} navigation={this.props.navigation} />}
         onClose={() => this.closeDrawer()} >
-   <Header style={{backgroundColor:'#fff'}} >
-   <Left>
-            <Button transparent onPress={this.openDrawer}>
+                     <HeaderBox navigation={this.props.navigation} />
+
+         
+        <Content style={{marginTop:5}}>
+ <Button transparent onPress={this.openDrawer}>
               <Icon type="Ionicons" name="folder" style={{fontSize: 30, color: 'blue'}} />
             </Button>
-          </Left>
-          <Body>
-             <HeaderBox navigation={this.props.navigation} />
-
-          </Body>
-        </Header>        
-        <Content>
-
         
        
         <ScrollView >     
         
-          <Grid>
-          <Row>
-<Col>   
-{!this.state.username &&   
-         <View><Button onPress={() => { alert(1); navigate('Login')}}><Text> ورود به محیط کاربری</Text></Button>
-          </View>
-}{this.state.username &&
-<View><Button onPress={this.logout}><Text> خروج از سیستم</Text></Button>
-          </View>
-
-}  
-          </Col>  
-     
-       
          
-          </Row>
-          </Grid>
 
           <Grid >
           
@@ -210,8 +188,8 @@ let that = this;
               <Left>
                 <Thumbnail source={{uri:'https://www.pizzagooshe.com/Content/UploadFiles/contents/LG_7f48205b-a12c-4dde-a99b-f7a5b5eb022e.png'}} />
                 <Body>
-                  <Text>{this.state.MaxObj.title}</Text>
-                  <Text note>{this.state.MaxObj.subTitle}</Text>
+                  <Text style={{fontFamily:'IRANSansMobile'}}>{this.state.MaxObj.title}</Text>
+                  <Text style={{fontFamily:'IRANSansMobile'}} note>{this.state.MaxObj.subTitle}</Text>
                 </Body>
               </Left>
             </CardItem>
@@ -221,8 +199,8 @@ let that = this;
             <CardItem>
               
  <Body style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',direction:'rtl',padding:5}}>
-               <Text style={{color:'#fff'}}>حراج روز</Text>
-                <Text style={{color:'yellow'}}> {this.state.day} روز {this.state.hours} ساعت  {this.state.minutes} دقیقه {this.state.seconds} ثانیه </Text>
+               <Text style={{color:'#fff',fontFamily:'IRANSansMobile'}}>حراج روز</Text>
+                <Text style={{color:'yellow',fontFamily:'IRANSansMobile'}}> {this.state.day} روز {this.state.hours} ساعت  {this.state.minutes} دقیقه {this.state.seconds} ثانیه </Text>
                 
               </Body>    
             </CardItem>
@@ -239,10 +217,10 @@ let that = this;
               <View> 
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[0].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
-               <Text style={{textAlign:'right',color:'#fff'}} >
+               <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}} >
               {this.state.Products4[0].title}
                 </Text>
-                <Text style={{textAlign:'right',color:'#fff'}}>
+                <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}}>
               {this.state.Products4[0].price - ((this.state.Products4[0].price * this.state.Products4[0].off)/100)} تومان
 
                 </Text>
@@ -253,10 +231,10 @@ let that = this;
               <View>
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[1].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
-               <Text style={{textAlign:'right',color:'#fff'}} >
+               <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}} >
               {this.state.Products4[1].title}
                 </Text>
-                <Text style={{textAlign:'right',color:'#fff'}}>
+                <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}}>
               {this.state.Products4[1].price - ((this.state.Products4[1].price * this.state.Products4[0].off)/100)} تومان
 
                 </Text>
@@ -271,10 +249,10 @@ let that = this;
                <View>
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[2].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
-               <Text style={{textAlign:'right',color:'#fff'}} >
+               <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}} >
               {this.state.Products4[2].title}
                 </Text>
-                <Text style={{textAlign:'right',color:'#fff'}}>
+                <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}}>
               {this.state.Products4[2].price - ((this.state.Products4[2].price * this.state.Products4[0].off)/100)} تومان
 
                 </Text>
@@ -285,10 +263,10 @@ let that = this;
                <View>
                 <Image style={{ height: '100%',opacity:'0.8'}} source={{uri:'https://marketapi.sarvapps.ir/' + this.state.Products4[3].fileUploaded.split("public")[1]}} />
                <View style={{position:'absolute',bottom:50,right:0,backgroundColor:'rgba(0,0,0,0.5)',padding:5,width:'100%'}}>  
-               <Text style={{textAlign:'right',color:'#fff'}} >
+               <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}} >
               {this.state.Products4[3].title}
                 </Text>
-                <Text style={{textAlign:'right',color:'#fff'}}>
+                <Text style={{textAlign:'right',color:'#fff',fontFamily:'IRANSansMobile'}}>
               {this.state.Products4[3].price - ((this.state.Products4[3].price * this.state.Products4[0].off)/100)} تومان
 
                 </Text>
@@ -307,7 +285,7 @@ let that = this;
             dataSource={this.state.Products}
             renderEmpty={() =>
               <View style={{ alignSelf: "center" }}>
-                <Text>Over</Text>
+                <Text style={{fontFamily:'IRANSansMobile'}}>Over</Text>
               </View>  
             }  
             renderItem={item =>
@@ -317,8 +295,8 @@ let that = this;
                   <Left> 
                     <Thumbnail source={{uri:'https://marketapi.sarvapps.ir/' + item.fileUploaded.split("public")[1]}} />
                     <Body>    
-                      <Text>{item.title}</Text>
-                      <Text note>{item.subTitle}</Text>  
+                      <Text style={{fontFamily:'IRANSansMobile'}}>{item.title}</Text>
+                      <Text style={{fontFamily:'IRANSansMobile'}} note>{item.subTitle}</Text>  
                     </Body>
                   </Left> 
                 </CardItem>
@@ -327,7 +305,7 @@ let that = this;
                 </CardItem>
                 <CardItem>
                   <Icon name="heart" style={{ color: '#ED4A6A' }} />
-                  <Text>{item.title}</Text>
+                  <Text style={{fontFamily:'IRANSansMobile'}}>{item.title}</Text>
                 </CardItem>
               </Card>
             }

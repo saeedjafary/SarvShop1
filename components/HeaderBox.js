@@ -43,7 +43,8 @@ class HeaderBox extends React.Component {
             CartNumber:0
     }
     this.findUser = this.findUser.bind(this);
-    
+            this.logout = this.logout.bind(this);
+
   }  
 
   findUser(){
@@ -81,7 +82,13 @@ class HeaderBox extends React.Component {
   componentDidMount() {
     this.findUser(); 
   }
- 
+   logout(){    
+    alert(1)
+    AsyncStorage.setItem('api_token',"");
+    this.setState({
+      username:null  
+    })
+  }
  
 
  
@@ -91,26 +98,54 @@ class HeaderBox extends React.Component {
            
     return (  
      
-    
-          
-          
-        <Grid style={{backgroundColor:'#ccc',marginBottom:5,width:'100%'}}>
+     <Header style={{backgroundColor:'#fff'}}  >
+
+          <Body>
+ <Grid style={{width:'100%'}}>
         <Row>
-      <Col>
-         {this.state.username &&
-         <View><Text style={{paddingRight:10,textAlign:'right'}}>{this.state.name  ?       this.state.name : this.state.username}</Text></View>
-         }
-         </Col> 
+       
+      
          
-        <Col  style={{width:80}}  onPress={() => { navigate('Cart')}} >
+        <Col  style={{width:80}} onPress={() => { navigate('Cart')}} >
          {this.state.username &&
-         <View><Text style={{paddingRight:10,textAlign:'right',verticalAlign:'top'}}> ({this.state.CartNumber}) <Icon type="Ionicons" name="cart" style={{fontSize: 30, color: 'red'}}/></Text></View>
+         <View  ><Text style={{fontFamily:'IRANSansMobile'}}><Icon type="Ionicons" name="cart" style={{fontSize: 30, color: 'red'}}/> ({this.state.CartNumber}) </Text></View>
          }
          </Col>  
-    
-          </Row>
+          <Col>
+         {this.state.username &&
+         <View style={{flex: 1,justifyContent: 'center',alignItems: 'center'}}><Text style={{fontFamily:'IRANSansMobile'}}>{this.state.name  ?  this.state.name : 'خوش آمدید'}</Text></View>
+         }
+         </Col>
+     <Col style={{width:100}}>   
+{!this.state.username &&   
+         <View>
+           <Button  onPress={() => {  navigate('Login')}} iconLeft  info>
+                       <Icon name='person' />
+
+            <Text style={{fontFamily:'IRANSansMobile'}}> ورود</Text>
+           </Button>
            
+          </View>
+}{this.state.username &&
+<View>
+  
+
+  <Button  onPress={this.logout} iconLeft  info >
+            <Icon name='exit' />
+            <Text style={{fontFamily:'IRANSansMobile'}}> خروج</Text>
+           </Button>
+          </View>
+
+}  
+          </Col> 
+          </Row>
+         
           </Grid>
+          </Body>
+        </Header> 
+          
+       
+         
           
     );  
   }

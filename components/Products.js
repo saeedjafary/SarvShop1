@@ -136,7 +136,7 @@ class Products extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>محصولات</Title>
+            <Title style={{fontFamily:'IRANSansMobile'}}>محصولات</Title>
           </Body>
           <Right>
            
@@ -150,14 +150,14 @@ class Products extends React.Component {
              <Row>  
              <Col >  
                 <View style={{backgroundColor:'#eee'}}>
-                  <Text style={{textAlign:'center',paddingRight:10,fontSize:25}}>{this.state.Products[0].title}</Text>
-                  <Text style={{textAlign:'center',paddingRight:10}}>{this.state.Products[0].subTitle}</Text>
-                  <Text style={{textAlign:'right',padding:10,color:'red'}}>{this.state.Products[0].price - ((this.state.Products[0].price * this.state.Products[0].off)/100)} تومان</Text>
+                  <Text style={{fontFamily:'IRANSansMobile',textAlign:'center',paddingRight:10,fontSize:25}}>{this.state.Products[0].title}</Text>
+                  <Text style={{fontFamily:'IRANSansMobile',textAlign:'center',paddingRight:10}}>{this.state.Products[0].subTitle}</Text>
+                  <Text style={{fontFamily:'IRANSansMobile',textAlign:'right',padding:10,color:'red'}}>{this.state.Products[0].price - ((this.state.Products[0].price * this.state.Products[0].off)/100)} تومان</Text>
 
                
                 </View>
                 <View>
-                  <Text style={{textAlign:'right',padding:10}}>{this.state.Products[0].desc}</Text>
+                  <Text style={{fontFamily:'IRANSansMobile',textAlign:'right',padding:10}}>{this.state.Products[0].desc}</Text>
                 </View>
              </Col>
              
@@ -183,20 +183,20 @@ class Products extends React.Component {
   <Grid>
     <Row>
       <Col  style={{width:'20%'}}>
-          <TouchableOpacity onPress={() => this.ChangeCount(1)}><Text style={{fontSize:50,textAlign:'center'}}>+</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => this.ChangeCount(1)}><Text style={{fontFamily:'IRANSansMobile',fontSize:50,textAlign:'center'}}>+</Text></TouchableOpacity>
       </Col>
       <Col style={{width:'60%'}}>
           <Input value={this.state.Count} keyboardType="number-pad" name="username"                        onChangeText={(text) => this.setState({Count:text})  } style={{border:1,textAlign:'center',fontSize:50}}  />
       </Col>
       <Col style={{width:'20%'}}>
-          <TouchableOpacity  onPress={() => this.ChangeCount(-1)}><Text style={{fontSize:50,textAlign:'center'}}>-</Text></TouchableOpacity>
+          <TouchableOpacity  onPress={() => this.ChangeCount(-1)}><Text style={{fontFamily:'IRANSansMobile',fontSize:50,textAlign:'center'}}>-</Text></TouchableOpacity>
       </Col>
     </Row>
   </Grid>
-  <View style={{textAlign:'center',marginBottom:10,marginTop:10}}>
+  <View style={{fontFamily:'IRANSansMobile',textAlign:'center',marginBottom:10,marginTop:10}}>
       <Button iconLeft light onPress={() => this.SendToCart()}>
             <Icon name='cart' />
-            <Text style={{textAlign:'center'}}>انتقال به سبد خرید</Text>
+            <Text style={{fontFamily:'IRANSansMobile',textAlign:'center'}}>انتقال به سبد خرید</Text>
           </Button>
   </View>
          </ScrollView> 
