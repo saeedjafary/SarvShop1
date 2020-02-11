@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList } from 'react-native'; 
+import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList,TouchableOpacity } from 'react-native'; 
 import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
@@ -10,12 +10,52 @@ import {AsyncStorage} from 'react-native';
 import { Drawer } from 'native-base';
 import SideBar from './SideBar.js'
 import HeaderBox from './HeaderBox.js'
+import Autocomplete from 'react-native-autocomplete-input';
+
 const styles = StyleSheet.create({
   Text: {
     color: 'blue',
     fontWeight: 'bold',
     fontSize: 30,
     fontFamily:'IRANSansMobile'
+  },
+  container: {
+    backgroundColor: '#F5FCFF',
+    flex: 1,
+    paddingTop: 25
+  },
+  autocompleteContainer: {
+    marginLeft: 10,
+    marginRight: 10
+  },
+  itemText: {
+    fontSize: 15,
+    margin: 2
+  },
+  descriptionContainer: {
+    // `backgroundColor` needs to be set otherwise the
+    // autocomplete input will disappear on text input.
+    backgroundColor: '#F5FCFF',
+    marginTop: 8
+  },
+  infoText: {
+    textAlign: 'center'
+  },
+  titleText: {
+    fontSize: 18,
+    fontWeight: '500',
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: 'center'
+  },
+  directorText: {
+    color: 'grey',
+    fontSize: 12,
+    marginBottom: 10,
+    textAlign: 'center'
+  },
+  openingText: {
+    textAlign: 'center'
   }
 });
 Drawer.defaultProps.styles.mainOverlay.elevation = 0;   
@@ -29,6 +69,17 @@ function Item({ title }) {
   );
 }
 class Home extends React.Component {   
+   static renderFilm(film) {
+    const { title, subTitle, desc } = film;
+
+    return (
+      <View>
+        <Text style={styles.titleText}>{title}. {title}</Text>
+        <Text style={styles.directorText}>({subTitle})</Text>
+        <Text style={styles.openingText}>{desc}</Text>
+      </View>
+    );
+  }
   constructor(props){   
     super(props);    
           const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -49,12 +100,23 @@ class Home extends React.Component {
             username:null,
             userId:null,
             name:"",
-            CartNumber:0
+            CartNumber:0,
+            films: [],
+             query: ''
     }
         this.openDrawer = this.openDrawer.bind(this)
     this.closeDrawer = this.closeDrawer.bind(this)
 
   }  
+    findFilm(query) {
+    if (query === '') {
+      return [];
+    }
+
+    const { films } = this.state;
+    const regex = new RegExp(`${query.trim()}`, 'i');
+    return films.filter(film => film.title.search(regex) >= 0);
+  }
 closeDrawer(){
   this.drawer._root.close();
 }
@@ -137,6 +199,12 @@ let that = this;
           that.setState({
             Products4:response.data.result
           })
+          that.getProducts(1000)
+        }
+        if(limit==1000){
+          that.setState({
+            films:response.data.result
+          })
         }
         } 
     let ECallBack = function(error){
@@ -149,9 +217,9 @@ let that = this;
 
   render() { 
     const {navigate} = this.props.navigation;    
-
     const { query } = this.state;
-    const data = this._filterData(query);   
+    const films = this.findFilm(query);
+    const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();   
     return (  
      
     <Container>
@@ -170,17 +238,32 @@ let that = this;
               <Icon type="Ionicons" name="folder" style={{fontSize: 30, color: 'blue'}} />
             </Button>
             <View>
-      <View style={styles.autocompleteContainer}>
-          <Autocomplete
-      data={data}
-      defaultValue={query}
-      onChangeText={text => this.setState({ query: text })}
-      renderItem={({ item, i }) => (
-        <TouchableOpacity onPress={() => this.setState({ query: item })}>
-          <Text>{item}</Text>
-        </TouchableOpacity>
-      )}
-    />
+      <View style={styles.container}>
+        <Autocomplete
+          autoCapitalize="none"
+          autoCorrect={false}
+          containerStyle={styles.autocompleteContainer}
+          data={films.length === 1 && comp(query, films[0].title) ? [] : films}
+          defaultValue={query}
+          onChangeText={text => this.setState({ query: text })}
+          placeholder="Enter Star Wars film title"
+          renderItem={(p) => (
+            <TouchableOpacity onPress={() => alert(1)}>
+              <Text style={styles.itemText}>
+                {p.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+        <View style={styles.descriptionContainer}>
+          {films.length > 0 ? (
+            Home.renderFilm(films[0])
+          ) : (
+            <Text style={styles.infoText}>
+              Enter Title of a Star Wars movie
+            </Text>
+          )}
+        </View>
       </View>
     </View>
           </View>
@@ -340,16 +423,6 @@ let that = this;
   }
 }
 
-const styles = StyleSheet.create({
-  autocompleteContainer: {
-    flex: 1,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    zIndex: 1
-  }
-});
 function mapStateToProps(state) {        
   return {
     CartNumber : state.CartNumber
