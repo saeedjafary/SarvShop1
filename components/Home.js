@@ -150,7 +150,8 @@ let that = this;
   render() { 
     const {navigate} = this.props.navigation;    
 
-           
+    const { query } = this.state;
+    const data = this._filterData(query);   
     return (  
      
     <Container>
@@ -164,9 +165,26 @@ let that = this;
 
          
         <Content style={{marginTop:5}}>
- <Button transparent onPress={this.openDrawer}>
+          <View>
+          <Button transparent onPress={this.openDrawer}>
               <Icon type="Ionicons" name="folder" style={{fontSize: 30, color: 'blue'}} />
             </Button>
+            <View>
+      <View style={styles.autocompleteContainer}>
+          <Autocomplete
+      data={data}
+      defaultValue={query}
+      onChangeText={text => this.setState({ query: text })}
+      renderItem={({ item, i }) => (
+        <TouchableOpacity onPress={() => this.setState({ query: item })}>
+          <Text>{item}</Text>
+        </TouchableOpacity>
+      )}
+    />
+      </View>
+    </View>
+          </View>
+            
         
        
         <ScrollView >     
@@ -322,7 +340,16 @@ let that = this;
   }
 }
 
-
+const styles = StyleSheet.create({
+  autocompleteContainer: {
+    flex: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 1
+  }
+});
 function mapStateToProps(state) {        
   return {
     CartNumber : state.CartNumber
