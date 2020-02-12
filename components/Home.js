@@ -22,39 +22,30 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F5FCFF',
     flex: 1,
-    paddingTop: 25
+    paddingTop: 25,
+    textAlign:'right',
+    direction:'rtl'
   },
   autocompleteContainer: {
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
+    textAlign:'right',
+    direction:'rtl'
   },
   itemText: {
     fontSize: 15,
-    margin: 2
+    margin: 2,
+    fontFamily:'IRANSansMobile',
+    textAlign:'right'
   },
   descriptionContainer: {
     // `backgroundColor` needs to be set otherwise the
     // autocomplete input will disappear on text input.
     backgroundColor: '#F5FCFF',
-    marginTop: 8
+    marginTop: 8,
+    direction:'rtl'
   },
   infoText: {
-    textAlign: 'center'
-  },
-  titleText: {
-    fontSize: 18,
-    fontWeight: '500',
-    marginBottom: 10,
-    marginTop: 10,
-    textAlign: 'center'
-  },
-  directorText: {
-    color: 'grey',
-    fontSize: 12,
-    marginBottom: 10,
-    textAlign: 'center'
-  },
-  openingText: {
     textAlign: 'center'
   }
 });
@@ -73,10 +64,8 @@ class Home extends React.Component {
     const { title, subTitle, desc } = film;
 
     return (
-      <View>
-        <Text style={styles.titleText}>{title}. {title}</Text>
-        <Text style={styles.directorText}>({subTitle})</Text>
-        <Text style={styles.openingText}>{desc}</Text>
+      <View style={{marginBottom:100}}> 
+        
       </View>
     );
   }
@@ -104,19 +93,18 @@ class Home extends React.Component {
             films: [],
              query: ''
     }
-        this.openDrawer = this.openDrawer.bind(this)
+    this.openDrawer = this.openDrawer.bind(this)
     this.closeDrawer = this.closeDrawer.bind(this)
 
-  }  
-    findFilm(query) {
+ }  
+ findFilm(query) {
     if (query === '') {
       return [];
     }
-
     const { films } = this.state;
     const regex = new RegExp(`${query.trim()}`, 'i');
     return films.filter(film => film.title.search(regex) >= 0);
-  }
+}
 closeDrawer(){
   this.drawer._root.close();
 }
@@ -246,11 +234,11 @@ let that = this;
           data={films.length === 1 && comp(query, films[0].title) ? [] : films}
           defaultValue={query}
           onChangeText={text => this.setState({ query: text })}
-          placeholder="Enter Star Wars film title"
+          placeholder="بخشی از عنوان محصول را وارد کنید"
           renderItem={(p) => (
-            <TouchableOpacity onPress={() => alert(1)}>
-              <Text style={styles.itemText}>
-                {p.title}
+            <TouchableOpacity onPress={() => navigate('Products', {id: p.item._id})}>
+              <Text style={styles.itemText}> 
+                {p.item.title}
               </Text>
             </TouchableOpacity>
           )}
@@ -260,7 +248,6 @@ let that = this;
             Home.renderFilm(films[0])
           ) : (
             <Text style={styles.infoText}>
-              Enter Title of a Star Wars movie
             </Text>
           )}
         </View>
