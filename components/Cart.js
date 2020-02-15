@@ -7,7 +7,7 @@ import moment from 'moment-jalaali';
 import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon,Title,Input } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {AsyncStorage} from 'react-native';
-
+import HeaderBox from './HeaderBox.js'
 class Cart extends React.Component {   
   constructor(props){   
     super(props);    
@@ -111,6 +111,8 @@ class Cart extends React.Component {
                     type: 'LoginTrueUser',    
                     CartNumber:that.state.CartNumber
                   })
+                  //HeaderBox.forceUpdate()
+                  //ReactDOM.render(آHeaderBox, forceUpdate)
                 
     
          };
@@ -122,22 +124,11 @@ class Cart extends React.Component {
   render() {
         const {navigate} = this.props.navigation;
         
-                       
+                            
     return (   
     <Container>
-         <Header>
-          <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name='arrow-back' />
-            </Button>
-          </Left>
-          <Body>
-            <Title style={{fontFamily:"IRANSansMobile"}}>سبد خرید ({this.state.CartNumber})</Title>
-          </Body>
-          <Right>
-           
-          </Right>
-        </Header>
+      <HeaderBox navigation={this.props.navigation} title={'سبد خرید'} goBack={true} NewCartNumber={this.state.CartNumber} />
+
         
         <Content>
         <ScrollView>

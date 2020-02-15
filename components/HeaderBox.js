@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList } from 'react-native'; 
+import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList,TouchableOpacity } from 'react-native'; 
 import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
@@ -18,7 +18,7 @@ function Item({ title }) {
       <Button ><Text>{title}</Text></Button>
     </View>
   );
-}
+}     
 class HeaderBox extends React.Component {   
   constructor(props){   
     super(props);    
@@ -41,17 +41,17 @@ class HeaderBox extends React.Component {
             userId:null,
             name:"",
             CartNumber:0
-    }
+    } 
     this.findUser = this.findUser.bind(this);
-            this.logout = this.logout.bind(this);
-
+    this.logout = this.logout.bind(this);
+    this.refresh = this.refresh.bind(this);
+           
   }  
 
   findUser(){
     let that = this;
       AsyncStorage.getItem('CartNumber').then((value) => {
                         console.log(value) 
-
               that.setState({   
                 CartNumber:value      
               })
@@ -74,22 +74,33 @@ class HeaderBox extends React.Component {
    this.Server.send("https://marketapi.sarvapps.ir/MainApi/checktoken",           {token:value},SCallBack,ECallBack) 
 
     } )
+  }   
+  componentWillReceiveProps(){
+    if(this.props.NewCartNumber)
+    this.setState({
+      CartNumber:this.props.NewCartNumber  
+    })
   }
   componentDidUpdate(){
-    if(this.props.navigation && this.props.navigation.state  && this.props.navigation.state.params && this.props.navigation.state.params.p && !this.state.username)
+     let that = this;
+        
+    if(this.props.navigatin && this.props.navigation.state  && this.props.navigation.state.params && this.props.navigation.state.params.p && !this.state.username)
       this.findUser(); 
   }
-  componentDidMount() {
+  componentDidMount() { 
     this.findUser(); 
   }
    logout(){    
-    alert(1)
     AsyncStorage.setItem('api_token',"");
     this.setState({
       username:null  
     })
   }
- 
+ refresh(){
+   this.setState({
+     CartNumber:this.props.CartNumber
+   })
+ }
 
  
   render() { 
@@ -99,21 +110,41 @@ class HeaderBox extends React.Component {
     return (  
      
      <Header style={{backgroundColor:'#fff'}}  >
-
-          <Body>
+      {this.props.goBack &&    
+          <Left >
+            <Button transparent onPress={() => {try         {this.props.navigation.state.params.onGoBack()}catch(e){}
+ ; this.props.navigation.goBack()}}>
+              <Icon name='arrow-back' />
+            </Button>
+          </Left>
+      }
+        <Body>
+      
+  {!this.props.goBack && 
  <Grid style={{width:'100%'}}>
         <Row>
        
       
          
-        <Col  style={{width:80}} onPress={() => { navigate('Cart')}} >
+        <Col  style={{width:80}} onPress={() => { navigate('Cart', {
+            onGoBack: () => this.refresh(),
+         })}} >
          {this.state.username &&
-         <View  ><Text style={{fontFamily:'IRANSansMobile'}}><Icon type="Ionicons" name="cart" style={{fontSize: 30, color: 'red'}}/> ({this.state.CartNumber}) </Text></View>
+          <TouchableOpacity onPress={() => { navigate('Cart', {
+            onGoBack: () => this.refresh(),
+         })}}>
+              <View  ><Text style={{fontFamily:'IRANSansMobile'}}><Icon type="Ionicons" name="cart" style={{fontSize: 30, color: 'red'}}/> ({this.state.CartNumber}) </Text></View>
+            </TouchableOpacity>
+         
          }
          </Col>  
-          <Col>
-         {this.state.username &&
+          <Col >
+         {!this.props.title && this.state.username &&
          <View style={{flex: 1,justifyContent: 'center',alignItems: 'center'}}><Text style={{fontFamily:'IRANSansMobile'}}>{this.state.name  ?  this.state.name : 'خوش آمدید'}</Text></View>
+         }
+         {
+           this.props.title && 
+           <View style={{flex: 1,justifyContent: 'center',alignItems: 'center'}}><Text style={{fontFamily:'IRANSansMobile'}}>{this.props.title}</Text></View>
          }
          </Col>
      <Col style={{width:100}}>   
@@ -138,10 +169,32 @@ class HeaderBox extends React.Component {
 
 }  
           </Col> 
-          </Row>
+          </Row>   
          
           </Grid>
-          </Body>
+        
+  }
+  {this.props.goBack &&             
+  <View style={{flex: 1,justifyContent: 'center',alignItems: 'center'}}><Text style={{fontFamily:'IRANSansMobile'}}>{this.props.title}</Text></View>
+   }   
+      </Body>
+
+    {this.props.goBack &&  
+    <Right  style={{width:50}} onPress={() => { navigate('Cart', {
+              onGoBack: () => this.refresh(),
+          })}} >
+          {this.state.username &&
+          <TouchableOpacity onPress={() => { navigate('Cart', {
+              onGoBack: () => this.refresh(),
+          })}}>
+              <View  ><Text style={{fontFamily:'IRANSansMobile'}}><Icon type="Ionicons" name="cart" style={{fontSize: 30, color: 'red'}}/> ({this.state.CartNumber}) </Text></View>
+            </TouchableOpacity>
+          }
+    </Right>  
+}        
+ 
+ 
+          
         </Header> 
           
        

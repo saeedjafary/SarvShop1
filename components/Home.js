@@ -71,7 +71,7 @@ class Home extends React.Component {
   }
   constructor(props){   
     super(props);    
-          const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         this.Server = new Server();
     this.state = {

@@ -40,13 +40,18 @@ getCategory(){
     return (
       <Container>
           <SafeAreaView >
+          <View style={{backgroundColor:'#ccc',marginTop:10}}>
+            <Text style={{textAlign:'center',fontFamily:'IRANSansMobile',paddingRight:5}}>
+                دسته بندی محصولات
+            </Text>
+          </View>
       <FlatList
         data={this.state.Cat}
         horizontal={false}
         inverted={true}
         renderItem={({ item }) => (
-          <View>
-          <TouchableOpacity onPress={() => navigate('Login', {name: 'Jane'})} style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between','textAlign':'right'}}><Text>{item.name}</Text><Icon name='close'   /></TouchableOpacity>
+          <View style={{margin:5,padding:5,flex: 1, flexDirection: 'row-reverse', justifyContent: 'space-between',width:'100%',backgroundColor:'#eee'}}>
+          <TouchableOpacity onPress={() => navigate('Login', {name: 'Jane'})} ><Text style={{fontFamily:'IRANSansMobile',paddingRight:5}}>{item.name}</Text></TouchableOpacity>
             
           </View>
         

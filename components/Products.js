@@ -7,6 +7,7 @@ import moment from 'moment-jalaali';
 import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon,Title,Input } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {AsyncStorage} from 'react-native';
+import HeaderBox from './HeaderBox.js'
 
 class Products extends React.Component {   
   constructor(props){   
@@ -73,7 +74,7 @@ class Products extends React.Component {
   SendToCart(){
     let that = this;
     this.Server.send("https://marketapi.sarvapps.ir/MainApi/checktoken",{
-      token:this.state.api_token
+      token:this.state.api_token   
     },function(response){
       let SCallBack = function(response){
              that.props.navigation.navigate('Cart',{p:'a'}) 
@@ -129,19 +130,7 @@ class Products extends React.Component {
                        
     return (   
     <Container>
-         <Header>
-          <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name='arrow-back' />
-            </Button>
-          </Left>
-          <Body>
-            <Title style={{fontFamily:'IRANSansMobile'}}>محصولات</Title>
-          </Body>
-          <Right>
-           
-          </Right>
-        </Header>
+        <HeaderBox navigation={this.props.navigation} title={'محصولات'} goBack={true} />
         
         <Content>
         <ScrollView>
