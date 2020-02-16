@@ -3,6 +3,7 @@ import Login from './components/Login'
 import Products from './components/Products'
 import Home from './components/Home'
 import Cart from './components/Cart'
+import Cat from './components/Cat'
 
 import Server from './components/Server'
 import { Provider } from "react-redux"
@@ -59,7 +60,11 @@ const AppStackNavigator = createStackNavigator({
     screen: Server,
     mode: 'screen'  
   }
- 
+ ,
+  Cat: {                                
+    screen: Cat,
+    mode: 'screen'  
+  }
 
  },
   {
