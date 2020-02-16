@@ -60,7 +60,7 @@ class Cat extends React.Component {
   {   
            this.state.GridData.map((item, index) => (
   
-                <Grid>
+                <Grid>   
                   <Row>
                   <Col>
  <Col>
