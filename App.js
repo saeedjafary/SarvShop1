@@ -63,7 +63,12 @@ const AppStackNavigator = createStackNavigator({
  ,
   Cat: {                                
     screen: Cat,
-    mode: 'screen'  
+    mode: 'screen',       
+    headerMode: 'none',
+    navigationOptions: {                    
+        header:null,           
+        headerVisible: false,
+    }  
   }
 
  },
