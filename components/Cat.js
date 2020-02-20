@@ -14,20 +14,25 @@ class Cat extends React.Component {
     this.Server = new Server();
     this.state = {
         id:this.props.navigation.state.params.id,
-        GridData:[]
+        GridData:[],
+        PageCount:0,
+        CurentPage:0,
+        GridDataPerPage:[]
     }
 
     
    
 
   }  
-  componentDidMount() {
+  componentDidMount() {   
      
    let that = this;
    
     let SCallBack = function(response){
       that.setState({
-        GridData:response.data.result
+        GridData:response.data.result,
+        PageCount:response.data.result.length,
+        GridDataPerPage:response.data.result.slice(0, 3)
       })
 
     }
@@ -51,7 +56,8 @@ class Cat extends React.Component {
  
   }
   render() {
-        
+        const {navigate} = this.props.navigation;    
+    
                             
     return (   
     <Container>
@@ -60,9 +66,9 @@ class Cat extends React.Component {
         <Content>
         <ScrollView>    
   {   
-           this.state.GridData.map((item, index) => (
+           this.state.GridDataPerPage.map((item, index) => (
   
-                <Grid style={{backgroundColor:Number.isInteger(index/2) ? '#eee' : '#ccc'}}>   
+                <Grid  onPress={() => navigate('Products', {id: item._id})}  style={{backgroundColor:Number.isInteger(index/2) ? '#eee' : '#ccc'}}>   
                   <Row style={{borderWidth: 1,borderColor: '#d6d7da'}}>
                     <Col  style={{verticalAlign:'middle',borderRightWidth: 1,borderColor: '#d6d7da'}}>
                     <Text style={{fontFamily:'IRANSansMobile',textAlign:'center'}}> {item.price - (item.price * item.off)/100} تومان </Text>
@@ -91,6 +97,44 @@ class Cat extends React.Component {
                 </Grid>
              ))     
   }
+  <View>
+  <Grid>
+  <Row>
+  {
+
+  (this.state.CurentPage*3)+3 < this.state.PageCount &&
+  <Col>
+    <TouchableOpacity  onPress={() =>{ 
+      var NewCurrentPage = this.state.CurentPage+1
+      this.setState({
+      CurentPage:NewCurrentPage,
+      GridDataPerPage:this.state.GridData.slice((NewCurrentPage)*3,((NewCurrentPage)*3)+3)
+    }
+    )
+     alert(((NewCurrentPage)*3)+3)
+    }
+    }><Text>صفحه بعد</Text></TouchableOpacity>
+  </Col> 
+  }  
+  {
+
+  this.state.CurentPage != 0 &&     
+  <Col>
+   <TouchableOpacity  onPress={() => {
+   var NewCurrentPage = this.state.CurentPage-1
+  
+   this.setState({
+      CurentPage:NewCurrentPage,
+      GridDataPerPage:this.state.GridData.slice((NewCurrentPage)*3,((NewCurrentPage)*3)+3)
+    })
+    alert(((NewCurrentPage)*3)+3)}
+    }><Text>صفحه قبل</Text></TouchableOpacity>
+  </Col>
+  }
+  </Row>
+  </Grid>      
+
+  </View>
 
           
          </ScrollView> 
