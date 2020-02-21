@@ -4,7 +4,9 @@ import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
 import moment from 'moment-jalaali'; 
-import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Icon,Title,Input } from 'native-base';
+import { Container,Content, Header, View,Button, DeckSwiper, Card, CardItem, Thumbnail, Text, Left,Right, Body, Title,Input } from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {AsyncStorage} from 'react-native';
 import HeaderBox from './HeaderBox.js'
@@ -111,9 +113,8 @@ class Cat extends React.Component {
       GridDataPerPage:this.state.GridData.slice((NewCurrentPage)*3,((NewCurrentPage)*3)+3)
     }
     )
-     alert(((NewCurrentPage)*3)+3)
     }
-    }><Text>صفحه بعد</Text></TouchableOpacity>
+    }><Text><Icon name="backward" size={30} color="#900" /></Text></TouchableOpacity>
   </Col> 
   }  
   {
@@ -127,8 +128,9 @@ class Cat extends React.Component {
       CurentPage:NewCurrentPage,
       GridDataPerPage:this.state.GridData.slice((NewCurrentPage)*3,((NewCurrentPage)*3)+3)
     })
-    alert(((NewCurrentPage)*3)+3)}
-    }><Text>صفحه قبل</Text></TouchableOpacity>
+    }    
+    
+    }><Text><Icon name="forward" size={30} color="#900" /></Text></TouchableOpacity>
   </Col>
   }
   </Row>

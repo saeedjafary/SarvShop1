@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList,TouchableOpacity } from 'react-native'; 
+import { StyleSheet ,ScrollView,ListView,SafeAreaView,FlatList,TouchableOpacity,Linking  } from 'react-native'; 
 import { connect } from "react-redux"
 import Server from './Server.js'
 import { Image } from 'react-native';
@@ -23,14 +23,44 @@ class Cart extends React.Component {
 
 
     }
+    this.Payment = this.Payment.bind(this);
+
 
     
    
 
+  }
+  Payment(){
+         let that = this;
+        let products_id=[];
+        for(let i=0;i<this.state.GridData.length;i++){
+            products_id.push({_id:this.state.GridData[i].product_id,number:this.state.GridData[i].number,title:this.state.GridData[i].products[0].title,subTitle:this.state.GridData[i].products[0].subTitle,desc:this.state.GridData[i].products[0].desc});
+        }
+        let param={    
+              Amount: this.state.lastPrice,
+              userId:this.state.UserId,
+              products_id:products_id
+        };   
+        let SCallBack = function(response){                      
+               console.log(response.data.result) 
+               let res =response.data.result;
+               Linking.openURL(res)                               
+
+             //  window.location = res;
+         };
+         let ECallBack = function(error){
+                alert(error)
+        }
+        this.Server.send("https://marketapi.sarvapps.ir/MainApi/payment",param,SCallBack,ECallBack)
+
+
+   
+
   }  
+ 
   componentDidMount() {
        let that = this;
-
+    alert(1)
    AsyncStorage.getItem('api_token').then((value) => {
    this.setState({
     api_token : value
@@ -136,7 +166,7 @@ class Cart extends React.Component {
             &nbsp;&nbsp;<Text style={{fontSize:25,color:'red'}}>{this.state.lastPrice}</Text> &nbsp;&nbsp; 
             تومان
         </Text>
-        <Button style={{textAlign:'center',marginTop:10,marginBottom:10}} ><Text   style={{fontFamily:"IRANSansMobile"}}> پرداخت </Text></Button>
+        <Button style={{textAlign:'center',marginTop:10,marginBottom:10}} onPress={this.Payment} ><Text   style={{fontFamily:"IRANSansMobile"}}> پرداخت </Text></Button>
         </View>
          <Grid style={{border:'1px solid red'}}>
 {
