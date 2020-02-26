@@ -4,7 +4,7 @@ import Products from './components/Products'
 import Home from './components/Home'
 import Cart from './components/Cart'
 import Cat from './components/Cat'
-
+import Register from './components/Register'
 import Server from './components/Server'
 import { Provider } from "react-redux"
 import { createStore } from "redux"
@@ -70,7 +70,16 @@ const AppStackNavigator = createStackNavigator({
         headerVisible: false,
     }  
   }
-
+,
+  Register: {                                
+    screen: Register,
+    mode: 'screen',       
+    headerMode: 'none',
+    navigationOptions: {                    
+        header:null,           
+        headerVisible: false,
+    }  
+  }
  },
   {
     initialRouteName: 'Home',

@@ -90,9 +90,13 @@ class Login extends React.Component {
                <Label>رمز عبور</Label>
             </Item>
               
-              <Button iconLeft light style={{marginTop:20}} onPress ={this.Login}>
+              <Button iconLeft info style={{marginTop:20}} onPress ={this.Login}>
             <Icon name='arrow-back' />
             <Text>ورود</Text>
+          </Button>
+           <Button iconLeft primary style={{marginTop:20}} onPress={() => navigate('Register')}>
+            <Icon name='arrow-back' />
+            <Text>ثبت نام</Text>
           </Button>
           </Form>
 
