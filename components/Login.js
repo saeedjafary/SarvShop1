@@ -98,6 +98,10 @@ class Login extends React.Component {
             <Icon name='arrow-back' />
             <Text>ثبت نام</Text>
           </Button>
+          <Button iconLeft primary style={{marginTop:20}} onPress={() => navigate('Register',{type:'changePass'})           }>
+            <Icon name='arrow-back' />
+            <Text>بازیابی رمز عبور</Text>
+          </Button>
           </Form>
 
          </ScrollView> 

@@ -14,6 +14,7 @@ class Register extends React.Component {
     super(props);    
     this.Server = new Server();
     this.state = {
+        type:(this.props.navigation.state && this.props.navigation.state.params) ? this.props.navigation.state.params.type : '',
         username:null,
         password:null,
         password2:null,
@@ -21,9 +22,12 @@ class Register extends React.Component {
         SecurityCode : '',
         AfterFirstStep : false,
         AfterFinalStep : false,
-        SmsToken : null
+        SmsToken : null,
+        Waiting:false
     }
     this.Register=this.Register.bind(this);
+    this.GetNewPassword=this.GetNewPassword.bind(this);
+
 
     
    
@@ -40,42 +44,112 @@ class Register extends React.Component {
  
  
   }
+  GetNewPassword(){
+    let that = this;
+    this.setState({
+      Waiting:true,
+      HasError:null
+    })
+     let SCallBack = function(response){
+           
+           var text = response.data.result; 
+
+          if(isNaN(text)){
+          that.setState({
+            HasError:text,
+             Waiting:false
+          })
+          alert(text);
+          return;
+        }
+         
+                  
+            that.Server.send('https://marketapi.sarvapps.ir/MainApi/GetSmsToken',{
+              "UserApiKey":"b684bd5c7cc186e5c870c19b",
+              "SecretKey":"sj@907@4286"
+            },function(response){
+                    that.setState({
+                    SmsToken:response.data.result.TokenKey
+                  })
+            that.Server.send("https://marketapi.sarvapps.ir/MainApi/sendsms",{
+                    token: response.data.result.TokenKey,
+                    text: "رمز عبور جدید شما در سامانه ی فروشگاهی سرو : \n"+text+"\n در اولین فرصت رمز عبور خود را تغییر دهید",
+                    mobileNo : that.state.username
+                  },function(response){
+                    that.setState({
+                      Waiting:false,
+                      HasError:'رمز عبور جدید به شماره تلفن همراه شما ارسال شد'
+                    })     
+
+                
+                    console.log(response)
+
+
+
+                  },function(error){
+                      that.setState({
+                      Waiting:false
+                    })
+                      alert(error)   
+            })
+
+            },function(error){
+              that.setState({
+                      Waiting:false
+                    })
+                      alert(error)   
+            })
+
+                 
+          }
+          let ECallBack = function(error){
+              alert(error)   
+          }  
+        
+   that.Server.send("https://marketapi.sarvapps.ir/MainApi/GetNewPass",{
+        username: that.state.username
+      },SCallBack,ECallBack)
+
+  }
   Register() {
  
-    
-    if(!this.state.AfterFirstStep){
+      let that = this;
 
-      if(this.state.Password != this.state.Password2){
-        this.setState({
+    if(!that.state.AfterFirstStep){
+
+      if(that.state.Password != that.state.Password2){
+        that.setState({
           HasError:"رمز عبور و تکرار آن متفاوت است"
         })
         return;
       }
-  let that = this;
     let SCallBack = function(response){
+          console.log(response.data)
           if(response.data.result[0] && response.data.result[0].status=="1"){
-          this.setState({
+          that.setState({
             HasError:"شماره موبایل وارد شده قبلا در سیستم ثبت شده است"
           })
+          alert(that.state.HasError)
           return;
         }
-        this.setState({
+        that.setState({
           AfterFirstStep : true
         })  
             var SecCode = response.data.SecurityCode;
-           
+         
                   
-            this.Server.send("https://RestfulSms.com/api/Token",{
-              "UserApiKey":"3a1e943a66fde9ad4c0aa079",
-              "SecretKey":"sj@9074286"
+            that.Server.send('https://marketapi.sarvapps.ir/MainApi/GetSmsToken',{
+              "UserApiKey":"b684bd5c7cc186e5c870c19b",
+              "SecretKey":"sj@907@4286"
             },function(response){
-                    this.setState({
-                    SmsToken:response.data.TokenKey
+                    console.log(response.data);
+                    that.setState({
+                    SmsToken:response.data.result.TokenKey
                   })
-            this.Server.send("https://marketapi.sarvapps.ir/MainApi/sendsms",{
-                    token: response.data.TokenKey,
+            that.Server.send("https://marketapi.sarvapps.ir/MainApi/sendsms",{
+                    token: response.data.result.TokenKey,
                     text: "کد امنیتی ثبت نام در فروشگاه اینترنتی سرو : \n"+SecCode,
-                    mobileNo : this.state.Mobile
+                    mobileNo : that.state.username
                   },function(response){
                     alert(response)
 
@@ -95,14 +169,15 @@ class Register extends React.Component {
               alert(error)   
           }  
         
-   this.Server.send("https://marketapi.sarvapps.ir/MainApi/Register",{
-        username: this.state.Mobile,
-        password: this.state.Password,
+   that.Server.send("https://marketapi.sarvapps.ir/MainApi/Register",{
+        username: that.state.username,
+        password: that.state.Password,
         Step: "1"
       },SCallBack,ECallBack)
      
     }
 if(this.state.AfterFirstStep){
+     alert(1)
       if(this.state.SecurityCode == "" ){
 
         this.setState({
@@ -112,21 +187,23 @@ if(this.state.AfterFirstStep){
 
       }
 let SCallBack = function(response){
+   alert(2)
               if(response.data.msg){
-              this.setState({
+              that.setState({
                 HasError:response.data.msg
               })
+              alert(response.data.msg)
               return;
             }
 
-          this.Server.send("https://RestfulSms.com/api/Token",{
-            username: this.state.Mobile,
-            password: this.state.Password,
+          that.Server.send("https://marketapi.sarvapps.ir/MainApi/Register",{
+            username: that.state.username,
+            password: that.state.Password,
             Step: "3"
           },function(response){
-            localStorage.setItem("api_token",response.data.token);
+           // localStorage.setItem("api_token",response.data.token);
 
-            this.setState({
+            that.setState({
               AfterFinalStep : true
             })    
 
@@ -140,10 +217,10 @@ let SCallBack = function(response){
               alert(error)   
           }  
         
-   this.Server.send("https://marketapi.sarvapps.ir/MainApi/Register",{
-        username: this.state.Mobile,
-        password: this.state.Password,
-        SecurityCode: this.state.SecurityCode,
+   that.Server.send("https://marketapi.sarvapps.ir/MainApi/Register",{
+        username: that.state.username,
+        password: that.state.Password,
+        SecurityCode: that.state.SecurityCode,
         Step: "2"
       },SCallBack,ECallBack)
       
@@ -176,9 +253,10 @@ let SCallBack = function(response){
           </Right>
         </Header>
         <Content>
-        <ScrollView>    
+        <ScrollView>   
+         {this.state.type=='' &&
+ 
   <View>
-
    <Text style={{textAlign:'center',marginTop:10}}>ورود به محیط کاربری</Text>
           <Form>
            
@@ -192,17 +270,53 @@ let SCallBack = function(response){
                <Label>رمز عبور</Label>
             </Item>
             <Item inlineLabel >
-               <Input value={this.state.password} secureTextEntry={true} keyboardType="number-pad" name="password2"   onChangeText={(text) => this.setState({password2:text})  }  />
+               <Input value={this.state.password2} secureTextEntry={true} keyboardType="number-pad" name="password2"   onChangeText={(text) => this.setState({password2:text})  }  />
                <Label>تکرار رمز عبور</Label>
-            </Item>   
+            </Item>  
+            {this.state.AfterFirstStep &&
+            <Item inlineLabel >
+            <Input value={this.state.SecurityCode} secureTextEntry={true} keyboardType="number-pad" name="SecurityCode"   onChangeText={(text) => this.setState({SecurityCode:text})  }  />
+             
+                  <Label>کد امنیتی</Label>
+					  </Item>
+            } 
               <Button iconLeft info style={{marginTop:20}} onPress ={this.Register}>
             <Icon name='arrow-back' />
             <Text>ثبت نام</Text>
           </Button>
          
           </Form>   
-
+ 
   </View>
+ }{this.state.type=='changePass' &&
+ 
+  <Form>
+           
+            <Item inlineLabel>
+              <Input value={this.state.username} keyboardType="number-pad" name="username"                        onChangeText={(text) => this.setState({username:text})  }  />
+              <Label>موبایل</Label>
+
+            </Item>
+             
+              <Button iconLeft info style={{marginTop:20}} onPress ={this.GetNewPassword}>
+            <Icon name='arrow-back' />
+            <Text>دریافت رمز عبور</Text>
+          </Button>
+          {this.state.Waiting &&
+          <View style={{marginTop:15}}>
+              <Label style={{textAlign:'center',padding:10}}>لطفا صبر کنید</Label>
+              </View>
+          }
+          <View style={{marginTop:15}}>
+          <Label style={{textAlign:'center'}}>{this.state.HasError}</Label>
+          </View>
+         
+          </Form>   
+ 
+ 
+ 
+ }
+
 
           
          </ScrollView> 
